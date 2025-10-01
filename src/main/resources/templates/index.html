@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lost & Found Management</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js"></script>
+
+</head>
+<body>
+  <header>
+    <h1>Lost & Found Management System</h1>
+    <nav>
+      <a href="#add-item">Add Item</a>
+      <a href="#view-items">View Items</a>
+    </nav>
+  </header>
+
+  <!-- Add Item Section -->
+  <section id="add-item" class="card">
+    <h2>Add Lost/Found Item</h2>
+    <form id="itemForm">
+      <label for="name">Item Name:</label>
+      <input type="text" id="name" name="name" placeholder="Enter item name" required>
+
+      <label for="description">Description:</label>
+      <textarea id="description" name="description" placeholder="Enter description" required></textarea>
+
+      <label for="status">Status:</label>
+      <select id="status" name="status" required>
+        <option value="">Select status</option>
+        <option value="Lost">Lost</option>
+        <option value="Found">Found</option>
+      </select>
+
+      <label for="location">Location:</label>
+      <input type="text" id="location" name="location" placeholder="Where was it lost/found?" required>
+
+      <label for="contact">Contact Info:</label>
+      <input type="text" id="contact" name="contact" placeholder="Phone/Email" required>
+
+      <button type="submit">Add Item</button>
+    </form>
+  </section>
+
+  <!-- View/Search Items -->
+  <section id="view-items" class="card">
+    <h2>All Items</h2>
+    <input type="text" id="searchBox" placeholder="Search by name or location...">
+    <table>
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Description</th>
+          <th>Status</th>
+          <th>Location</th>
+          <th>Contact</th>
+        </tr>
+      </thead>
+      <tbody id="itemsTable">
+        <!-- Items fetched from backend will appear here -->
+      </tbody>
+    </table>
+  </section>
+
+  <script>
+    // Example JS to handle form submit & fetching
+    const form = document.getElementById('itemForm');
+    const tableBody = document.getElementById('itemsTable');
+    const searchBox = document.getElementById('searchBox');
+
+    // Submit form (POST request)
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = {
+        name: form.name.value,
+        description: form.description.value,
+        status: form.status.value,
+        location: form.location.value,
+        contact: form.contact.value
+      };
+
+      await fetch('/api/items', { // Adjust backend endpoint
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      form.reset();
+      loadItems();
+    });
+
+    // Load items (GET request)
+    async function loadItems() {
+      const res = await fetch('/api/items'); // Adjust backend endpoint
+      const items = await res.json();
+
+      tableBody.innerHTML = '';
+      items.forEach(item => {
+        const row = `
+          <tr>
+            <td>${item.name}</td>
+            <td>${item.description}</td>
+            <td>${item.status}</td>
+            <td>${item.location}</td>
+            <td>${item.contact}</td>
+          </tr>
+        `;
+        tableBody.innerHTML += row;
+      });
+    }
+
+    // Search filter
+    searchBox.addEventListener('input', () => {
+      const filter = searchBox.value.toLowerCase();
+      Array.from(tableBody.rows).forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(filter) ? '' : 'none';
+      });
+    });
+
+    // Initial load
+    loadItems();
+  </script>
+</body>
+</html>
