@@ -87,3 +87,37 @@ table th {
   border-radius: 4px;
   border: 1px solid #ccc;
 }
+/* Add these to your existing style.css */
+
+.status-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.status-badge.lost {
+  background-color: #ffebee;
+  color: #c62828;
+}
+
+.status-badge.found {
+  background-color: #e8f5e8;
+  color: #2e7d32;
+}
+
+/* Optional: Add some spacing improvements */
+.form-control {
+  margin-bottom: 10px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+/* Loading state */
+.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
